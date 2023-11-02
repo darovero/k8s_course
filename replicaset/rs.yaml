@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rs-test01
+  labels:
+    app: rs-test01
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: pod-label
+  template:
+    metadata:
+      labels:
+        app: pod-label
+    spec:
+      containers:
+      - name: cont01
+        image: python:3.6-alpine
+        command: ['sh', '-c', 'echo cont01 > index.html && python -m http.server 8082']
+      - name: cont02
+        image: python:3.6-alpine
+        command: ['sh', '-c', 'echo cont02 > index.html && python -m http.server 8083']
