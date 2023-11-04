@@ -50,4 +50,7 @@ spec:
         - name: nginx-vol
           configMap:
             name: nginx-config
+            # items:
+            # - key: nginx
+            #   path: default.conf
 
