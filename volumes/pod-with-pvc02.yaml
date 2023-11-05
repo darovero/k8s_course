@@ -51,9 +51,9 @@ spec:
           - name: MYSQL_ROOT_PASSWORD
             value: "123456789"
         volumeMounts:
-        - mountPath: "/var/lib/mysql"
-          name: vol-mysql
+          - mountPath: "/var/lib/mysql"
+            name: vol-mysql
       volumes:
-      - name: vol-mysql
-        persistentVolumeClaim:
-          claimName: test-pvc
+        - name: vol-mysql
+          persistentVolumeClaim:
+            claimName: test-pvc
