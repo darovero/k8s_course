@@ -1,0 +1,24 @@
+## RBAC
+minikube start --vm-driver=none  --extra-config=apiserver.authorization-mode=RBAC
+
+## Create keys and sign
+openssl genrsa -out davidv.key 2048
+openssl req -new -key davidv.key -out davidv.csr -subj "/CN=davidv/O=dev"
+sudo openssl x509 -req -in davidv.csr -CA /home/darovero/.minikube/ca.crt -CAkey /home/darovero/.minikube/ca.key -CAcreateserial -out davidv.crt -days 500
+openssl x509 -in  davidv.crt  -noout -text
+
+## Isolated env
+kubectl config view  | grep server
+docker run --rm -ti -v $PWD:/test -w /test -v /home/darovero/.minikube/ca.crt:/ca.crt -v /usr/local/bin/kubectl:/usr/bin/kubectl alpine sh
+
+## Configure kubectl for user on Container
+kubectl config set-cluster minikube --server=https://192.168.49.2:8443 --certificate-authority=/ca.crt
+kubectl config set-credentials davidv --client-certificate=davidv.crt --client-key=davidv.key
+kubectl config set-context davidv --cluster=minikube --user=davidv
+kubectl config use-context davidv
+
+## Configure kubectl for user on VM
+kubectl config set-cluster minikube --server=https://192.168.49.2:8443 --certificate-authority=//home/darovero/.minikube/ca.crt
+kubectl config set-credentials davidv --client-certificate=davidv.crt --client-key=davidv.key
+kubectl config set-context davidv --cluster=minikube --user=davidv
+kubectl config use-context davidv
