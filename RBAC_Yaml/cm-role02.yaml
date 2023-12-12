@@ -22,7 +22,7 @@ metadata:
   namespace: dev
 subjects:
 - kind: User
-  name: davidv
+  name: juand
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role

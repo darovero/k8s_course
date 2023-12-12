@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kubernetes.io/change-cause: "change Image fake"  
+    kubernetes.io/change-cause: "change Image Fake"  
   name: deployment-test
   labels:
     app: front
@@ -20,4 +20,4 @@ spec:
       - name: nginx
         image: nginx:fake
         ports:
-          - containerPort: 90
+          - containerPort: 92

@@ -19,7 +19,7 @@ spec:
         image: python:3.11-alpine
         command: ['sh', '-c', 'echo cont01 > index.html && python -m http.server 8082']
       - name: cont02
-        image: python:3.6-alpine
+        image: python:3.11-alpine
         command: ['sh', '-c', 'echo cont02 > index.html && python -m http.server 8083']
 # python:3.6-alpine
 # python:python:3.11-alpine

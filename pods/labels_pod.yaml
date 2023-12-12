@@ -5,6 +5,7 @@ metadata:
   labels:
     app: front
     env: dev
+    cc: '195352'
 spec:
   containers:
   - name: container01
