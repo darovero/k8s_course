@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hello-front-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/proxy-cache: "off"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /front-dev(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: front-dev
+            port:
+              number: 80
