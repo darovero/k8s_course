@@ -6,9 +6,9 @@ metadata:
 spec:
   limits:
   - max:
-      memory: 1Gi
-      cpu: 1
+      memory: 200Mi
+      cpu: 200m
     min:
       memory: 100Mi
       cpu: 100m
-    type: Container     
+    type: Container

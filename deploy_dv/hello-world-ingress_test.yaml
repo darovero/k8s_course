@@ -8,11 +8,6 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
-  # defaultBackend:
-  #   service:
-  #     name: front-dev
-  #     port:
-  #       number: 80
   rules:
   - http:
       paths:
@@ -34,26 +29,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: aks-helloworld-two
+            name: front-dev
             port:
               number: 80
-# ---
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: hello-world-ingress-static
-#   annotations:
-#     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-#     nginx.ingress.kubernetes.io/rewrite-target: /static/$2
-# spec:
-#   ingressClassName: nginx
-#   rules:
-#   - http:
-#       paths:
-#       - path: /static(/|$)(.*)
-#         pathType: Prefix
-#         backend:
-#           service:
-#             name: aks-helloworld-one
-#             port: 
-#               number: 80
