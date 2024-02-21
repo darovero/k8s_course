@@ -15,17 +15,17 @@ spec:
       containers:
         - name: backend
           image: darovero/k8s-hands-on:latest
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend-k8s-hands-on
-  labels:
-    app: backend
-spec:
-  selector:
-    app: backend
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 9090
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: backend-k8s-hands-on
+#   labels:
+#     app: backend
+# spec:
+#   selector:
+#     app: backend
+#   ports:
+#   - protocol: TCP
+#     port: 80
+#     targetPort: 9090

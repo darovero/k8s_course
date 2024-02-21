@@ -1,0 +1,4 @@
+Deployment Name,Container Name
+aks-helloworld-one,aks-helloworld-one
+aks-helloworld-two,aks-helloworld-two
+front-dev,front-dev

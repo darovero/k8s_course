@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uat-test-02
+  namespace: uat
+  labels:
+    app: front
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: front
+  template:
+    metadata:
+      labels:
+        app: front
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        resources:
+          limits: 
+            memory: "800Mi"
+            cpu: "40m"
+          requests:
+            memory: "500Mi"
+            cpu: "20m"
