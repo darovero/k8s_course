@@ -34,6 +34,7 @@ foreach ($configItem in $configData) {
     $cpu_request = $configItem.cpu_request
     $memory_request = $configItem.memory_request
 
+
     # Leer el contenido del archivo YAML
     $contenidoYAML = Get-Content -Path $yamlFilePath
 
@@ -48,7 +49,7 @@ foreach ($configItem in $configData) {
             $indentacion = $linea.IndexOf('image:')
             $nuevoContenido += ("{0}resources:" -f (' ' * $indentacion))
             $nuevoContenido += ("{0}  requests:" -f (' ' * ($indentacion)))
-            $nuevoContenido += ("{0}    cpu: cpu_request" -f (' ' * ($indentacion)))
+            $nuevoContenido += ("{0}    cpu: $cpu_request" -f (' ' * ($indentacion)))
             $nuevoContenido += ("{0}    memory: $memory_request" -f (' ' * ($indentacion)))
             $nuevoContenido += ("{0}  limits:" -f (' ' * ($indentacion)))
             $nuevoContenido += ("{0}    cpu: $cpu_limit" -f (' ' * ($indentacion)))
@@ -62,6 +63,8 @@ foreach ($configItem in $configData) {
     # Notifying successful addition of the fragment to the YAML file
     Write-Host "The fragment has been successfully added to the file $yamlFilePath."
 
+
+    
     # Staging changes, committing, and pushing them to the remote repository
     git add .
     git commit -m "Added YAML fragment for Kubernetes resources"
