@@ -1,36 +1,33 @@
 #!/bin/bash
 
-# Definir el nombre del archivo CSV
-csv_file="deployments_sc.csv"
+# Check if the CSV file exists
+if [ -f "deployments_sc.csv" ]; then
+    # Read the CSV file line by line, skipping the first line
+    for line in $(sed '1d' deployments_sc.csv); do
+        # Read deployment and namespace from each line
+        deployment=$(echo "$line" | cut -d ',' -f 1)
+        namespace=$(echo "$line" | cut -d ',' -f 2)
 
-# Verificar si el archivo CSV proporcionado existe
-if [ ! -f "$csv_file" ]; then
-    echo "El archivo CSV \"$csv_file\" no existe."
-    exit 1
-fi
+        # Get the deployment name
+        deployment_name=$(kubectl get deploy "$deployment" -n "$namespace" -o jsonpath='{.metadata.name}')
 
-# Iterar sobre cada línea del archivo CSV, omitiendo la primera línea
-{
-    read -r header   # Leer la primera línea y descartarla
-    while IFS=',' read -r deployment namespace; do
-        # Realizar el describe de la deployment
-        describe_output=$(kubectl describe deployment "$deployment" -n "$namespace" 2>/dev/null)
+        # Get the container name
+        container_name=$(kubectl get deploy "$deployment" -n "$namespace" -o=jsonpath='{.spec.template.spec.containers[*].name}')
 
-        # Extraer el nombre del deployment, el nombre del contenedor y la imagen del describe
-        deployment_name=$(echo "$describe_output" | awk '/^Name:/ {print $2}')
-        container_name=$(echo "$describe_output" | awk '/^Container ID:/ {print $2}')
-        container_image=$(echo "$describe_output" | awk '/^Image:/ {print $2}')
+        # Get the container image
+        container_image=$(kubectl get deploy "$deployment" -n "$namespace" -o=jsonpath='{.spec.template.spec.containers[*].image}')
 
-        # Mostrar la información obtenida
-        echo "Información obtenida de la deployment \"$deployment\" en el namespace \"$namespace\":"
-        echo "Deployment Name: $deployment_name"
-        echo "Container Name: $container_name"
-        echo "Container Image: $container_image"
+        # Store the information in temporary variables
+        temp_deployment="$deployment_name"
+        temp_container="$container_name"
+        temp_image="$container_image"
 
-        # Ejecutar kubectl patch con las variables obtenidas
-        kubectl patch deployment "$deployment_name" -n "$namespace" --type merge --patch "{\"spec\": {\"template\": {\"spec\": {\"containers\": [{\"name\": \"$container_name\", \"image\": \"$container_image\", \"securityContext\": {\"allowPrivilegeEscalation\": false}}]}}}}"
+        # Execute the kubectl patch command with the temporary variables
+        kubectl patch deployment "$temp_deployment" -n "$namespace" --type merge --patch "{\"spec\": {\"template\": {\"spec\": {\"containers\": [{\"name\": \"$temp_container\", \"image\": \"$temp_image\", \"securityContext\": {\"allowPrivilegeEscalation\": false}}]}}}}"
 
-        echo "Se ha actualizado la deployment \"$deployment_name\" en el namespace \"$namespace\" con la imagen \"$container_image\"."
-        echo ""
+        # Add a message for each deployment and namespace
+        echo "Deployment $temp_deployment in namespace $namespace has been patched."
     done
-} < "$csv_file"
+else
+    echo "The deployments_sc.csv file does not exist."
+fi
