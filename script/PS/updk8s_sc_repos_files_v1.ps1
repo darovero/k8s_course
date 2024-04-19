@@ -1,4 +1,4 @@
-# This script reads configuration data from a CSV file and performs several tasks for each configuration item.
+# Loads configuration data from CSV file
 $configFile = "add_sc_repos.csv"
 $configData = Import-Csv $configFile
 
@@ -29,51 +29,55 @@ foreach ($configItem in $configData) {
     # Constructing path to YAML file within the repository
     $yamlFilePath = Join-Path -Path (Join-Path -Path $repoDirectory -ChildPath $appDirectory) -ChildPath $yamlFileName
 
-
     # Read YAML file contents
     $contentYAML = Get-Content -Path $yamlFilePath
 
     # List for storing the lines of the updated YAML file
     $newContent = @()
 
-    # Flag to indicate if information on secutiryContext, and allowPrivilegeEscalation has already been found
-    $securityContextFound = $false
+    # Flag to indicate if information on securityContext, and allowPrivilegeEscalation has already been found
+    #$securityContextFound = $false
     $allowPrivilegeEscalationFound = $false
 
     # Iterate over each line of YAML content
     foreach ($line in $contentYAML) {
-        # Check if information on secutiryContext, and allowPrivilegeEscalation has already been found
-        if ($line -match '^\s+securityContext:') {
-            $resourcesFound = $true
-            continue
-        }
+        # # Check if information on securityContext, and allowPrivilegeEscalation has already been found
+        # if ($line -match '^\s+securityContext:') {
+        #     $securityContextFound = $true
+        #     continue
+        # }
         if ($line -match '^\s+allowPrivilegeEscalation:') {
-            $limitsFound = $true
+            $allowPrivilegeEscalationFound = $true
             continue
         }
 
         # If the `imagePullPolicy` key is found, add the resource and boundary lines
         if ($line -match '^\s+imagePullPolicy:') {
-            $indentacion = $line.IndexOf('imagePullPolicy:')
+            $indentation = $line.IndexOf('imagePullPolicy:')
             $newContent += $line
-            if (-not $resourcesFound) {
-                $newContent += ("{0}securityContext:" -f (' ' * $indentacion))
-                $newContent += ("{0}  allowPrivilegeEscalation: $allowPrivilegeEscalation" -f (' ' * ($indentacion)))
+            if (-not $securityContextFound) {
+                $newContent += ("{0}securityContext:" -f (' ' * $indentation))
+                $newContent += ("{0}  allowPrivilegeEscalation: $allowPrivilegeEscalation" -f (' ' * ($indentation)))
             }
             continue
         }
 
-    # Add line to new content if it is not information about secutiryContext, and allowPrivilegeEscalation
-    $newContent += $line
-}
+        # Add line to new content if it is not information about securityContext, and allowPrivilegeEscalation
+        $newContent += $line
+    }
 
     # Save the updated YAML file
     $newContent | Set-Content -Path $yamlFilePath
-   
+
     # Staging changes, committing, and pushing them to the remote repository
     git add .
-    git commit -m "Added secutiryContext, and allowPrivilegeEscalation to the YAML file"
-    git push origin $branch
+    git commit -m "Updated YAML $yamlFileName file with securityContext and allowPrivilegeEscalation"
+    try {
+        git push origin $branch
+        Write-Output "Changes pushed successfully."
+    } catch {
+        Write-Error "Failed to push changes: $_"
+    }
 
     # Returning to the parent directory and removing the cloned repository
     cd ..
