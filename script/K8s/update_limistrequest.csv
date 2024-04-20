@@ -1,0 +1,3 @@
+deploymentname,containername,limitiscpu,limitsmemory,requestscpu,requestsmemory
+aks-helloworld-two,aks-helloworld-two,100m,200Mi,70m,150Mi
+aks-helloworld-one,aks-helloworld-one,150m,250Mi,90m,200Mi

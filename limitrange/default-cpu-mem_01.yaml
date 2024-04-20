@@ -1,21 +1,21 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: dev
+  name: limitrange
   labels:
-    name: dev
+    name: limitrange
 ---
 apiVersion: v1
 kind: LimitRange
 metadata:
   name: mem-cpu-limit-range
-  namespace: dev
+  namespace: limitrange
 spec:
   limits:
   - default:
-      memory: 512Mi
-      cpu: 1
+      memory: 200m
+      cpu: 300Mi
     defaultRequest:
-      memory: 256Mi
-      cpu: 0.5
+      memory: 150m
+      cpu: 200Mi
     type: Container
