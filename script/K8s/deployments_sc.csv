@@ -1,5 +1,2 @@
 deployment,namespace
 front-dev,dev
-back-dev,dev
-front-dev,qa
-back-dev,qa

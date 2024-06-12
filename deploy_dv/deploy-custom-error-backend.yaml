@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: custom-default-backend  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: custom-default-backend
+  template:
+    metadata:
+      labels:
+        app: custom-default-backend
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 2000
+        fsGroup: 2000
+        supplementalGroups: [2000]
+      containers:
+      - name: custom-default-backend
+        image: juanmadrid388/custom-errors:latest
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: custom-default-backend  
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    name: http
+  selector:
+    app: custom-default-backend
