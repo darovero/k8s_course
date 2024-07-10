@@ -6,29 +6,34 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
-spec:
-  ingressClassName: nginx
-  rules:
-  - http:
-      paths:
-      - path: /hello-world-one(/|$)(.*)
-        pathType: Prefix
-        backend:
-          service:
-            name: aks-helloworld-one
-            port:
-              number: 80
-      - path: /hello-world-two(/|$)(.*)
-        pathType: Prefix
-        backend:
-          service:
-            name: aks-helloworld-two
-            port:
-              number: 80
-      - path: /(.*)
-        pathType: Prefix
-        backend:
-          service:
-            name: front-dev
-            port:
-              number: 80
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location = / {
+       rewrite ^ https://uat-portal.genyus.ey.com/portal/login permanent;
+       break;
+      }
+  spec:
+    ingressClassName: nginx
+    rules:
+    - http:
+        paths:
+        - backend:
+            service:
+              name: nginx-prod
+              port:
+                number: 80
+          path: /([^/]*)(.*)
+          pathType: Prefix
+        - backend:
+            service:
+              name: aks-helloworld-one
+              port:
+                number: 80
+          path: /hello-world-one(/|$)(.*)
+          pathType: Prefix
+        - backend:
+            service:
+              name: aks-helloworld-two
+              port:
+                number: 80
+          path: /hello-world-two(/|$)(.*)
+          pathType: Prefix
